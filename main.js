@@ -1,111 +1,83 @@
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// References to DOM Elements
+const prevBtn = document.querySelector("#prev-btn");
+const nextBtn = document.querySelector("#next-btn");
+const book = document.querySelector("#book");
+
+const paper1 = document.querySelector("#p1");
+const paper2 = document.querySelector("#p2");
+const paper3 = document.querySelector("#p3");
+
+// Event Listener
+prevBtn.addEventListener("click", goPrevPage);
+nextBtn.addEventListener("click", goNextPage);
+
+// Business Logic
+let currentLocation = 1;
+let numOfPapers = 3;
+let maxLocation = numOfPapers + 1;
+
+function openBook() {
+    book.style.transform = "translateX(50%)";
+    prevBtn.style.transform = "translateX(-180px)";
+    nextBtn.style.transform = "translateX(180px)";
 }
 
-body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-family: sans-serif;
-    background-color: powderblue;
+function closeBook(isAtBeginning) {
+    if(isAtBeginning) {
+        book.style.transform = "translateX(0%)";
+    } else {
+        book.style.transform = "translateX(100%)";
+    }
+    
+    prevBtn.style.transform = "translateX(0px)";
+    nextBtn.style.transform = "translateX(0px)";
 }
 
-/* Book */
-.book {
-    position: relative;
-    width: 550px;
-    height: 450px;
-    transition: transform 0.5s;
+function goNextPage() {
+    if(currentLocation < maxLocation) {
+        switch(currentLocation) {
+            case 1:
+                openBook();
+                paper1.classList.add("flipped");
+                paper1.style.zIndex = 1;
+                break;
+            case 2:
+                paper2.classList.add("flipped");
+                paper2.style.zIndex = 2;
+                break;
+            case 3:
+                paper3.classList.add("flipped");
+                paper3.style.zIndex = 3;
+                closeBook(false);
+                break;
+            default:
+                throw new Error("unkown state");
+        }
+        currentLocation++;
+    }
 }
 
-.paper {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    perspective: 1500px;
+function goPrevPage() {
+    if(currentLocation > 1) {
+        switch(currentLocation) {
+            case 2:
+                closeBook(true);
+                paper1.classList.remove("flipped");
+                paper1.style.zIndex = 3;
+                break;
+            case 3:
+                paper2.classList.remove("flipped");
+                paper2.style.zIndex = 2;
+                break;
+            case 4:
+                openBook();
+                paper3.classList.remove("flipped");
+                paper3.style.zIndex = 1;
+                break;
+            default:
+                throw new Error("unkown state");
+        }
 
-}
-
-.front,
-.back {
-    background-color: white;
-	
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    transform-origin: left;
-    transition: transform 0.5s;
-}
-
-.front {
-    z-index: 1;
-    backface-visibility: hidden;
-    border-left: 3px solid powderblue;
-}
-
-.back {
-    z-index: 0;
-}
-
-.front-content,
-.back-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.back-content {
-    transform: rotateY(180deg)
-}
-
-/* Paper flip effect */
-.flipped .front,
-.flipped .back {
-    transform: rotateY(-180deg);
-}
-
-/* Controller Buttons */
-button {
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    margin: 100px;
-    transition: transform 0.5s;
-}
-
-button:focus {
-    outline: none;
-}
-
-button:hover i {
-    color: #636363;
-}
-
-i {
-    font-size: 50px;
-    color: gray;
-}
-
-/* Paper stack order */
-#p1 {
-    z-index: 3;
-}
-
-#p2 {
-    z-index: 2;
-}
-
-#p3 {
-    z-index: 1;
-}
-
+        currentLocation--;
+    }
+}// JavaScript Document
